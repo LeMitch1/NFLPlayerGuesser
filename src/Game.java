@@ -3,11 +3,7 @@ import java.util.*;
 public class Game {
 
     private Player playerToGuess;
-    private String userGuessPosition = "";
-    private String userGuessConference = "";
-    private String userGuessDivision = "";
-    private String userGuessTeam = "";
-    private int count;
+    private int count = 0;
 
     // quarterbacks
     private final Player JOSH_ALLEN = new Player("Josh Allen", "QB", "AFC",
@@ -83,11 +79,6 @@ public class Game {
 
     ArrayList<Player> remainingPlayers = new ArrayList<>(Arrays.asList(playerPool));
 
-    // convert Player to String to check if players are in the list
-    // another/better way to do this?
-    private final String[] playerArrayToString = Arrays.stream(playerPool).map(Object::toString).
-            toArray(String[]::new);
-
     public void selectRandomPlayer() {
         Random random = new Random();
         playerToGuess = playerPool[random.nextInt(playerPool.length)];
@@ -122,6 +113,7 @@ public class Game {
     public void checkUserGuess() {
         Scanner scanner = new Scanner(System.in);
         String userGuess;
+        Player userPickedPlayer;
         boolean correctPlayer = false;
 
         String[] positionArray = {"QB", "WR", "RB"};
@@ -135,27 +127,20 @@ public class Game {
         while (!correctPlayer) {
             userGuess = scanner.nextLine();
 
-            // checks for player in player pool
-            // don't understand code, just knows what it does
-            if (Arrays.stream(playerArrayToString).noneMatch(userGuess::equalsIgnoreCase)) {
+            for(int i = 0; i < playerPool.length; i++) {
+                Player currentPlayer = playerPool[i];
+                if (currentPlayer.getName().equalsIgnoreCase(userGuess)) {
+                    count++;
+                    userPickedPlayer = currentPlayer;
+                }
+            }
+
+            if (count == 0) {
                 System.out.println("Please select a player from the player pool.");
-            } else {
-                // only counts valid guesses
-                count++;
             }
 
             // checks for correct player, else sets userGuess to player object attributes
-            if (!userGuess.equalsIgnoreCase(playerToGuess.getName())) {
-                for (Player player : playerPool) {
-                    if (userGuess.equalsIgnoreCase(player.getName())) {
-                        userGuess = player.getName();
-                        userGuessPosition = player.getPosition();
-                        userGuessConference = player.getConference();
-                        userGuessDivision = player.getDivision();
-                        userGuessTeam = player.getTeam();
-                    }
-                }
-
+            if (playerToGuess != userPickedPlayer) {
                 /**
                  * commented-out code below will end the game if there is only one eligible player left,
                  * but I found that I was losing a majority of the time with it active
@@ -171,24 +156,24 @@ public class Game {
 //                }
 
                 // checks position
-                if (!userGuessPosition.equals(playerToGuess.getPosition())) {
+                if (!userPickedPlayer.getPosition().equals(playerToGuess.getPosition())) {
                     for (String pos : positionArray) {
-                        if (userGuessPosition.equals(pos)) {
+                        if (userPickedPlayer.getPosition().equals(pos)) {
                             System.out.print("The player is not a " + pos);
                         }
                     }
                 } else {
                     for (String pos : positionArray) {
-                        if (userGuessPosition.equals(pos)) {
+                        if (userPickedPlayer.getPosition().equals(pos)) {
                             System.out.print("The player is a " + pos);
                         }
                     }
                 }
 
                 // checks conference (wrong)
-                if (!userGuessConference.equals(playerToGuess.getConference())) {
+                if (!userPickedPlayer.getConference().equals(playerToGuess.getConference())) {
                     for (String conf : conferenceArray) {
-                        if (userGuessConference.equals(conf)) {
+                        if (userPickedPlayer.getConference().equals(conf)) {
                             System.out.println(", is not in the " + conf);
                         }
                     }
@@ -196,19 +181,19 @@ public class Game {
                     // checks conference (correct)
                 } else {
                     for (String conf : conferenceArray) {
-                        if (userGuessConference.equals(conf)) {
+                        if (userPickedPlayer.getConference().equals(conf)) {
                             System.out.print(", is in the " + conf);
 
                             // checks division
-                            if (!userGuessDivision.equals(playerToGuess.getDivision())) {
-                                System.out.println(", but not the " + userGuessConference + " " + userGuessDivision);
+                            if (!userPickedPlayer.getDivision().equals(playerToGuess.getDivision())) {
+                                System.out.println(", but not the " + userPickedPlayer.getConference() + " " + userPickedPlayer.getDivision());
                             } else {
-                                System.out.print(" " + userGuessDivision);
+                                System.out.print(" " + userPickedPlayer.getDivision());
 
                                 // checks team
-                                if (!userGuessTeam.equals(playerToGuess.getTeam())) {
+                                if (!userPickedPlayer.getTeam().equals(playerToGuess.getTeam())) {
                                     for (String team : teamArray) {
-                                        if (userGuessTeam.equals(team)) {
+                                        if (userPickedPlayer.getTeam().equals(team)) {
                                             System.out.println(", but not on the " + team);
                                         }
                                     }
@@ -233,51 +218,55 @@ public class Game {
         // removes players that don't fit criteria and prints remaining players
         for (Player player : playerPool) {
 
-            // removes position -- guessed incorrectly
-            if (!userGuessPosition.equals(playerToGuess.getPosition())) {
-                if (userGuessPosition.equals(player.getPosition())) {
+            // removes position
+            if (!userPickedPlayer.getPosition().equals(playerToGuess.getPosition())) {
+                // guessed incorrectly, removes players with same incorrect guess
+                if (userPickedPlayer.getPosition().equals(player.getPosition())) {
                     remainingPlayers.remove(player);
                 }
             } else {
                 // guessed correctly, removes other positions
-                if (!userGuessPosition.equals(player.getPosition())) {
+                if (!userPickedPlayer.getPosition().equals(player.getPosition())) {
                     remainingPlayers.remove(player);
                 }
             }
 
-            // removes conference -- guessed incorrectly
-            if (!userGuessConference.equals(playerToGuess.getConference())) {
-                if (userGuessConference.equals(player.getConference())) {
+            // removes conference
+            if (!userPickedPlayer.getConference().equals(playerToGuess.getConference())) {
+                // guessed incorrectly, removes players with same incorrect guess
+                if (userPickedPlayer.getConference().equals(player.getConference())) {
                     remainingPlayers.remove(player);
                 }
             } else {
                 // guessed correctly, removes other conference
-                if (!userGuessConference.equals(player.getConference())) {
+                if (!userPickedPlayer.getConference().equals(player.getConference())) {
                     remainingPlayers.remove(player);
                 }
             }
 
             // removes divisions only if correctly guessed conference
             // division guessed correctly, removes other divisions
-            if (!userGuessDivision.equals(playerToGuess.getDivision())) {
-                if (userGuessDivision.equals(player.getDivision())) {
+            if (!userPickedPlayer.getDivision().equals(playerToGuess.getDivision())) {
+                // guessed incorrectly, removes players with same incorrect guess
+                if (userPickedPlayer.getDivision().equals(player.getDivision())) {
                     remainingPlayers.remove(player);
                 }
             } else {
                 // guessed incorrectly
-                if (!userGuessDivision.equals(player.getDivision())) {
+                if (!userPickedPlayer.getDivision().equals(player.getDivision())) {
                     remainingPlayers.remove(player);
                 }
             }
 
-            // removes team -- guessed incorrectly
-            if (!userGuessTeam.equals(playerToGuess.getTeam())) {
-                if (userGuessTeam.equals(player.getTeam())) {
+            // removes team
+            if (!userPickedPlayer.getTeam().equals(playerToGuess.getTeam())) {
+                // guessed incorrectly, removes players with same incorrect guess
+                if (userPickedPlayer.getTeam().equals(player.getTeam())) {
                     remainingPlayers.remove(player);
                 }
             } else {
                 // guessed correctly, remove other teams
-                if (!userGuessTeam.equals(player.getTeam())) {
+                if (!userPickedPlayer.getTeam().equals(player.getTeam())) {
                     remainingPlayers.remove(player);
                 }
             }

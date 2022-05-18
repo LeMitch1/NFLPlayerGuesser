@@ -127,16 +127,16 @@ public class Game {
         while (!correctPlayer) {
             userGuess = scanner.nextLine();
 
-            for(int i = 0; i < playerPool.length; i++) {
-                Player currentPlayer = playerPool[i];
+            userPickedPlayer = null;
+            for (Player currentPlayer : playerPool)
                 if (currentPlayer.getName().equalsIgnoreCase(userGuess)) {
-                    count++;
                     userPickedPlayer = currentPlayer;
+                    break;
                 }
-            }
 
-            if (count == 0) {
+            if (userPickedPlayer == null) {
                 System.out.println("Please select a player from the player pool.");
+                continue;
             }
 
             // checks for correct player, else sets userGuess to player object attributes

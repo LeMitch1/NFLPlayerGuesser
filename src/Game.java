@@ -2,6 +2,9 @@ import java.util.*;
 
 public class Game {
 
+    private Roster roster = new Roster();
+    private Player[] players = new Player[3];
+
     private Player playerToGuess;
     private String userGuessPosition = "";
     private String userGuessConference = "";
@@ -9,88 +12,23 @@ public class Game {
     private String userGuessTeam = "";
     private int count;
 
-    // quarterbacks
-    private final Player JOSH_ALLEN = new Player("Josh Allen", "QB", "AFC",
-            "East", "BUF Bills");
-    private final Player TOM_BRADY = new Player("Tom Brady", "QB", "NFC",
-            "South", "TB Buccaneers");
-    private final Player JUSTIN_HERBERT = new Player("Justin Herbert", "QB", "AFC",
-            "West", "LAC Chargers");
-    private final Player PATRICK_MAHOMES = new Player("Patrick Mahomes", "QB", "AFC",
-            "West", "KC Chiefs");
-    private final Player LAMAR_JACKSON = new Player("Lamar Jackson", "QB", "AFC",
-            "North", "BAL Ravens");
-    private final Player KYLER_MURRAY = new Player("Kyler Murray", "QB", "NFC",
-            "West", "ARI Cardinals");
-    private final Player JOE_BURROW = new Player("Joe Burrow", "QB", "AFC",
-            "North", "CIN Bengals");
-    private final Player DAK_PRESCOTT = new Player("Dak Prescott", "QB", "NFC",
-            "East", "DAL Cowboys");
-    private final Player MATT_STAFFORD = new Player("Matt Stafford", "QB", "NFC",
-            "West", "LAR Rams");
-    private final Player AARON_RODGERS = new Player("Aaron Rodgers", "QB", "NFC",
-            "North", "GB Packers");
+    public void fillArray() {
+        for (int i = 0; i < players.length; i++) {
+            players[i] = roster.getPlayers()[i];
+        }
+    }
 
-    // wide receivers
-    private final Player COOPER_KUPP = new Player("Cooper Kupp", "WR", "NFC",
-            "West", "LAR Rams");
-    private final Player JAMARR_CHASE = new Player("Ja'Marr Chase", "WR", "AFC",
-            "North", "CIN Bengals");
-    private final Player JUSTIN_JEFFERSON = new Player("Justin Jefferson", "WR", "NFC",
-            "North", "MIN Vikings");
-    private final Player DEEBO_SAMUEL = new Player("Deebo Samuel", "WR", "NFC",
-            "West", "SF 49ers");
-    private final Player DAVANTE_ADAMS = new Player("Davante Adams", "WR", "AFC",
-            "West", "LV Raiders");
-    private final Player STEFON_DIGGS = new Player("Stefon Diggs", "WR", "AFC",
-            "East", "BUF Bills");
-    private final Player AJ_BROWN = new Player("AJ Brown", "WR", "NFC",
-            "East", "PHI Eagles");
-    private final Player CEEDEE_LAMB = new Player("CeeDee Lamb", "WR", "NFC",
-            "East", "DAL Cowboys");
-    private final Player TYREEK_HILL = new Player("Tyreek Hill", "WR", "AFC",
-            "East", "MIA Dolphins");
-    private final Player DEANDRE_HOPKINS = new Player("DeAndre Hopkins", "WR", "NFC",
-            "West", "ARI Cardinals");
-
-    // running backs
-    private final Player JONATHAN_TAYLOR = new Player("Jonathan Taylor", "RB", "AFC",
-            "South", "IND Colts");
-    private final Player DERRICK_HENRY = new Player("Derrick Henry", "RB", "AFC",
-            "South", "TEN Titans");
-    private final Player AUSTIN_EKELER = new Player("Austin Ekeler", "RB", "AFC",
-            "West", "LAC Chargers");
-    private final Player DALVIN_COOK = new Player("Dalvin Cook", "RB", "NFC",
-            "North", "MIN Vikings");
-    private final Player CHRISTIAN_MCCAFFREY = new Player("Christian McCaffrey", "RB", "NFC",
-            "South", "CAR Panthers");
-    private final Player JOE_MIXON = new Player("Joe Mixon", "RB", "AFC",
-            "North", "CIN Bengals");
-    private final Player NICK_CHUBB = new Player("Nick Chubb", "RB", "AFC",
-            "North", "CLE Browns");
-    private final Player ALVIN_KAMARA = new Player("Alvin Kamara", "RB", "NFC",
-            "South", "NO Saints");
-    private final Player LEONARD_FOURNETTE = new Player("Leonard Fournette", "RB", "NFC",
-            "South", "TB Buccaneers");
-    private final Player SAQUON_BARKLEY = new Player("Saquon Barkley", "RB", "NFC",
-            "East", "NYG Giants");
-
-    private final Player[] playerPool = {JOSH_ALLEN, TOM_BRADY, JUSTIN_HERBERT, PATRICK_MAHOMES, LAMAR_JACKSON,
-            KYLER_MURRAY, JOE_BURROW, DAK_PRESCOTT, MATT_STAFFORD, AARON_RODGERS, COOPER_KUPP, JAMARR_CHASE,
-            JUSTIN_JEFFERSON, DEEBO_SAMUEL, DAVANTE_ADAMS, STEFON_DIGGS, AJ_BROWN, CEEDEE_LAMB, TYREEK_HILL,
-            DEANDRE_HOPKINS, JONATHAN_TAYLOR, DERRICK_HENRY, AUSTIN_EKELER, DALVIN_COOK, CHRISTIAN_MCCAFFREY,
-            JOE_MIXON, NICK_CHUBB, ALVIN_KAMARA, LEONARD_FOURNETTE, SAQUON_BARKLEY};
-
-    ArrayList<Player> remainingPlayers = new ArrayList<>(Arrays.asList(playerPool));
+    ArrayList<Player> remainingPlayers = new ArrayList<>(Arrays.asList(players));
 
     // convert Player to String to check if players are in the list
     // another/better way to do this?
-    private final String[] playerArrayToString = Arrays.stream(playerPool).map(Object::toString).
+    private final String[] playerArrayToString = Arrays.stream(players).map(Object::toString).
             toArray(String[]::new);
 
     public void selectRandomPlayer() {
+        fillArray();
         Random random = new Random();
-        playerToGuess = playerPool[random.nextInt(playerPool.length)];
+        playerToGuess = players[random.nextInt(players.length)];
     }
 
     public void startPlaying() {
@@ -107,9 +45,9 @@ public class Game {
 
         // prints players in player pool
         for (int i = 0; i < 10; i++) {
-            System.out.printf(format, playerPool[i]);
-            System.out.printf(format, playerPool[i + 10]);
-            System.out.printf(format, playerPool[i + 20]);
+            System.out.printf(format, players[i]);
+            System.out.printf(format, players[i + 10]);
+            System.out.printf(format, players[i + 20]);
             System.out.println();
         }
         System.out.println();
@@ -146,7 +84,7 @@ public class Game {
 
             // checks for correct player, else sets userGuess to player object attributes
             if (!userGuess.equalsIgnoreCase(playerToGuess.getName())) {
-                for (Player player : playerPool) {
+                for (Player player : players) {
                     if (userGuess.equalsIgnoreCase(player.getName())) {
                         userGuess = player.getName();
                         userGuessPosition = player.getPosition();
@@ -231,7 +169,7 @@ public class Game {
     public ArrayList<Player> removePlayers() {
 
         // removes players that don't fit criteria and prints remaining players
-        for (Player player : playerPool) {
+        for (Player player : players) {
 
             // removes position -- guessed incorrectly
             if (!userGuessPosition.equals(playerToGuess.getPosition())) {
